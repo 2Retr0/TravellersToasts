@@ -4,10 +4,12 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkSectionPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.registry.RegistryEntry;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
+import net.minecraft.world.chunk.ChunkStatus;
 import net.minecraft.world.dimension.DimensionType;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -53,6 +55,7 @@ public abstract class MixinClientPlayerEntity {
     }
 
 
+
     /**
      *
      * @param biome
@@ -87,8 +90,10 @@ public abstract class MixinClientPlayerEntity {
     @Inject(method = "tick", at = @At("HEAD"))
     private void onTick(CallbackInfo ci) {
         final var HOLD_TICKS = TICKS_PER_SECOND * 3; // Ticks for which the isEnteringBiome condition must be met.
+        final var MAX_INHABITED_TIME = TICKS_PER_SECOND * 60 * 120; // i.e. 2 hours.
 
         var clientWorld = instance.clientWorld;
+        var chunkManager = clientWorld.getChunkManager();
         var blockPos = instance.getBlockPos();
         var velocity = instance.getVelocity();
 
@@ -115,6 +120,16 @@ public abstract class MixinClientPlayerEntity {
         // Don't decrement or increment counter if the player is not moving--staggered movement may still result in
         // toasts being shown!
         if (!(instance.input.hasForwardMovement() || velocity.getY() <= -1d)) return;
+
+        var x = ChunkSectionPos.getSectionCoord(blockPos.getX());
+        var z = ChunkSectionPos.getSectionCoord(blockPos.getZ());
+        var currentChunk = instance.getWorld().getChunkManager().getWorldChunk(x, z, false);
+
+        // TravellersToasts.LOGGER.info(chunk == null ? "null" : String.valueOf(chunk.getInhabitedTime()));
+
+        if (currentChunk == null || currentChunk.getInhabitedTime() >= MAX_INHABITED_TIME)
+            return;
+
 
         if (currentBiome != previousBiome
             && currentBiome == futureBiome

@@ -2,18 +2,23 @@ package retr0.travellerstoasts;
 
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.event.client.ClientSpriteRegistryCallback;
 import net.fabricmc.fabric.api.event.registry.DynamicRegistrySetupCallback;
 import net.fabricmc.fabric.api.event.registry.RegistryEntryAddedCallback;
+import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.resource.ResourcePackActivationType;
 import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.texture.SpriteAtlasTexture;
+import net.minecraft.network.PacketByteBuf;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.screen.PlayerScreenHandler;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.Registry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -71,5 +76,15 @@ public class TravellersToasts implements ClientModInitializer {
         //     registry.register(new Identifier(MOD_ID, ));
         // });
 
+        ClientPlayNetworking.registerGlobalReceiver(new Identifier(MOD_ID, "inhabited_time_sync"), (client, handler, buf, responseSender) -> {
+            // Read packet data on the event loop
+            long inhabitedTime = buf.readLong();
+            BlockPos blockPos = buf.readBlockPos();
+
+            client.execute(() -> {
+                // Everything in this lambda is run on the render thread
+                LOGGER.info(String.valueOf(inhabitedTime) + ", " + blockPos.toString());
+            });
+        });
     }
 }
