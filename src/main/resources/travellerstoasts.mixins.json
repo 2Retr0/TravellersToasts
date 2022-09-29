@@ -3,13 +3,10 @@
     "minVersion": "0.8",
     "package": "retr0.travellerstoasts.mixin",
     "compatibilityLevel": "JAVA_17",
-    "client": [
-        "MixinClientPlayerEntity"
+    "mixins": [
+        "MixinPlayerEntity"
     ],
     "injectors": {
         "defaultRequire": 1
-    },
-    "mixins": [
-        "MixinPlayerEntity"
-    ]
+    }
 }

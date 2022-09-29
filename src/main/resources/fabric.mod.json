@@ -16,8 +16,11 @@
     "icon": "assets/travellerstoasts/icon.png",
     "environment": "*",
     "entrypoints": {
-        "client": [
+        "main": [
             "retr0.travellerstoasts.TravellersToasts"
+        ],
+        "client": [
+            "retr0.travellerstoasts.TravellersToastsClient"
         ]
     },
     "mixins": [

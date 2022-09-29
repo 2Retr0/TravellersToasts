@@ -1,6 +1,7 @@
 package retr0.travellerstoasts;
 
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.api.DedicatedServerModInitializer;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
@@ -8,6 +9,9 @@ import net.fabricmc.fabric.api.event.client.ClientSpriteRegistryCallback;
 import net.fabricmc.fabric.api.event.registry.DynamicRegistrySetupCallback;
 import net.fabricmc.fabric.api.event.registry.RegistryEntryAddedCallback;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
+import net.fabricmc.fabric.api.networking.v1.ServerLoginConnectionEvents;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.resource.ResourcePackActivationType;
 import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
@@ -17,8 +21,10 @@ import net.minecraft.network.PacketByteBuf;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.screen.PlayerScreenHandler;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkSectionPos;
 import net.minecraft.util.registry.Registry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,7 +33,7 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-public class TravellersToasts implements ClientModInitializer {
+public class TravellersToasts implements ModInitializer {
     private record Pair<A> (A left, A right) { };
 
     public static final String MOD_ID = "travellerstoasts";
@@ -38,8 +44,14 @@ public class TravellersToasts implements ClientModInitializer {
 
     public static final Map<Identifier, Pair<Integer>> ICON_OFFSET_MAP = new HashMap<>();
 
+    public static long inhabitedTime = -1L;
+    public static BlockPos blockPos = new BlockPos(0, 0, 0);
+
+    public static final Identifier SYNC_ID = new Identifier(MOD_ID, "inhabited_time_sync");
+    public static final Identifier MOD_LOADED = new Identifier(MOD_ID, "server_mod_loaded");
+
     @Override
-    public void onInitializeClient() {
+    public void onInitialize() {
         // This code runs as soon as Minecraft is in a mod-load-ready state.
         // However, some things (like resources) may still be uninitialized.
         // Proceed with mild caution.
@@ -76,15 +88,39 @@ public class TravellersToasts implements ClientModInitializer {
         //     registry.register(new Identifier(MOD_ID, ));
         // });
 
-        ClientPlayNetworking.registerGlobalReceiver(new Identifier(MOD_ID, "inhabited_time_sync"), (client, handler, buf, responseSender) -> {
-            // Read packet data on the event loop
-            long inhabitedTime = buf.readLong();
-            BlockPos blockPos = buf.readBlockPos();
 
-            client.execute(() -> {
-                // Everything in this lambda is run on the render thread
-                LOGGER.info(String.valueOf(inhabitedTime) + ", " + blockPos.toString());
-            });
+        // all on server side:
+        //    * when a player joins the server, contact them letting them know the mod is installed
+        //    * only track player which ahs contacted server (i.e. they know the server has mod and would like to monitor inhabited time)
+        //    * when the proper conditions are met, send a packet back to the client to show the message!
+
+        // all on client side:
+        //    * after connecting to the server
+
+        ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
+            LOGGER.info("Sent " + MOD_LOADED.getPath() + " notification to " + handler.connection.getAddress().toString());
+            sender.sendPacket(MOD_LOADED, PacketByteBufs.empty());
         });
+
+        ServerPlayNetworking.registerGlobalReceiver(SYNC_ID,
+            (server, player, handler, buf, responseSender) -> {
+                server.execute(() -> {
+                    var blockPos = player.getBlockPos();
+                    var x = ChunkSectionPos.getSectionCoord(blockPos.getX());
+                    var z = ChunkSectionPos.getSectionCoord(blockPos.getZ());
+                    var worldChunk = player.getWorld().getChunkManager().getWorldChunk(x, z, false);
+                    var inhabitedTime = -1L;
+
+                    if (worldChunk != null)
+                        inhabitedTime = worldChunk.getInhabitedTime();
+
+                    var sendBuf = PacketByteBufs.create();
+                    sendBuf.writeLong(inhabitedTime);
+                    sendBuf.writeBlockPos(blockPos);
+
+                    // ServerPlayNetworking.send(player, SYNC_ID2, sendBuf);
+                    responseSender.sendPacket(SYNC_ID, sendBuf);
+                });
+            });
     }
 }

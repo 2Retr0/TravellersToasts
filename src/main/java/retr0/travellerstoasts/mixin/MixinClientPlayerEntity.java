@@ -1,8 +1,13 @@
 package retr0.travellerstoasts.mixin;
 
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
+import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.world.ClientWorld;
+import net.minecraft.network.PacketByteBuf;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkSectionPos;
 import net.minecraft.util.math.Vec3d;
@@ -20,19 +25,22 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import retr0.travellerstoasts.BiomeToast;
 import retr0.travellerstoasts.TravellersToasts;
+import retr0.travellerstoasts.TravellersToastsClient;
 
 import java.util.Objects;
 
 import static net.fabricmc.fabric.api.tag.convention.v1.ConventionalBiomeTags.CAVES;
+import static retr0.travellerstoasts.TravellersToasts.MOD_ID;
+import static retr0.travellerstoasts.TravellersToasts.SYNC_ID;
 
 @Mixin(ClientPlayerEntity.class)
 public abstract class MixinClientPlayerEntity {
-    @Shadow @Final protected MinecraftClient client;
     @Unique private final int TICKS_PER_SECOND = 20;
 
     @Unique private final ClientPlayerEntity instance = ((ClientPlayerEntity) (Object) this);
     @Unique private RegistryEntry<Biome> previousBiome = instance.clientWorld.getBiome(instance.getBlockPos());
     @Unique private int ticksEnteringBiome = 0;
+    @Unique private boolean awaitingServerResponse = false;
 
     /**
      * Gets the biome at a relative future position considering the given {@code velocity} over {@code PEEK_SECONDS}.
@@ -93,7 +101,6 @@ public abstract class MixinClientPlayerEntity {
         final var MAX_INHABITED_TIME = TICKS_PER_SECOND * 60 * 120; // i.e. 2 hours.
 
         var clientWorld = instance.clientWorld;
-        var chunkManager = clientWorld.getChunkManager();
         var blockPos = instance.getBlockPos();
         var velocity = instance.getVelocity();
 
@@ -101,9 +108,23 @@ public abstract class MixinClientPlayerEntity {
         var futureBiome = getFutureBiome(clientWorld, instance.getPos(), velocity);
 
         if (ticksEnteringBiome == HOLD_TICKS) {
-            BiomeToast.show(MinecraftClient.getInstance().getToastManager(), currentBiome);
-            previousBiome = currentBiome;
-            ticksEnteringBiome = 0;
+            // if server has mod, ask to track inhabitedTime **ONCE**, then wait until called back.
+            if (TravellersToastsClient.doesServerHaveModLoaded) {
+                if (!awaitingServerResponse) {
+                    ClientPlayNetworking.send(new Identifier(MOD_ID, "track_inhabited_time"), PacketByteBufs.empty());
+                    ClientPlayNetworking.unregisterGlobalReceiver(new Identifier(MOD_ID, "track_inhabited_time"));
+                    ClientPlayNetworking.registerGlobalReceiver(new Identifier(MOD_ID, "track_inhabited_time"),
+                        (client, handler, buf, responseSender) -> {
+                            TravellersToasts.LOGGER.info("wow!");
+                            awaitingServerResponse = false;
+                        });
+                    awaitingServerResponse = true;
+                }
+            } else {
+                BiomeToast.show(MinecraftClient.getInstance().getToastManager(), currentBiome);
+                previousBiome = currentBiome;
+                ticksEnteringBiome = 0;
+            }
         }
 
         /* We define a player to "begin exploring" a new biome as follows:
@@ -127,9 +148,11 @@ public abstract class MixinClientPlayerEntity {
 
         // TravellersToasts.LOGGER.info(chunk == null ? "null" : String.valueOf(chunk.getInhabitedTime()));
 
-        if (currentChunk == null || currentChunk.getInhabitedTime() >= MAX_INHABITED_TIME)
-            return;
+        TravellersToasts.LOGGER.info(String.valueOf(TravellersToasts.inhabitedTime) + ", " + TravellersToasts.blockPos.toString());
 
+        ClientPlayNetworking.send(SYNC_ID, PacketByteBufs.empty());
+        if (TravellersToasts.inhabitedTime < 0 || TravellersToasts.inhabitedTime >= MAX_INHABITED_TIME)
+            return;
 
         if (currentBiome != previousBiome
             && currentBiome == futureBiome
