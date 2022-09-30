@@ -30,8 +30,7 @@ import retr0.travellerstoasts.TravellersToastsClient;
 import java.util.Objects;
 
 import static net.fabricmc.fabric.api.tag.convention.v1.ConventionalBiomeTags.CAVES;
-import static retr0.travellerstoasts.TravellersToasts.MOD_ID;
-import static retr0.travellerstoasts.TravellersToasts.SYNC_ID;
+import static retr0.travellerstoasts.TravellersToasts.*;
 
 @Mixin(ClientPlayerEntity.class)
 public abstract class MixinClientPlayerEntity {
@@ -73,15 +72,14 @@ public abstract class MixinClientPlayerEntity {
      */
     @Unique
     private boolean areBiomeFeaturesVisible(RegistryEntry<Biome> biome, ClientWorld clientWorld, BlockPos blockPos) {
-        var server = MinecraftClient.getInstance().getServer();
-        if (server != null && !server.getBossBarManager().getAll().isEmpty())
-            return false;
-
         // We use the current mood percentage to ensure that when mining, the player is not notified of biome changes
         // they would not be able to see.
         if (clientWorld.getRegistryKey() == World.NETHER)
             // For the nether, the mood percentage tends to fluctuate more often and at higher values (e.g. >0.0008f).
             return instance.getMoodPercentage() < 0.001f;
+        else if (clientWorld.getRegistryKey() == World.END)
+            // We consider the biome features of The End biomes to always be visible.
+            return true;
 
         // For the overworld, the mood percentage tends to stay at 0f, except in denser environments (e.g. Dark Forest)
         // where it instead may go as high as 0.0004f.
@@ -95,10 +93,9 @@ public abstract class MixinClientPlayerEntity {
     /**
      * Handles showing new biomes for {@link BiomeToast} when the player <i>begins exploring</i> a new biome.
      */
-    @Inject(method = "tick", at = @At("HEAD"))
+    @Inject(method = "tick", at = @At("TAIL"))
     private void onTick(CallbackInfo ci) {
         final var HOLD_TICKS = TICKS_PER_SECOND * 3; // Ticks for which the isEnteringBiome condition must be met.
-        final var MAX_INHABITED_TIME = TICKS_PER_SECOND * 60 * 120; // i.e. 2 hours.
 
         var clientWorld = instance.clientWorld;
         var blockPos = instance.getBlockPos();
@@ -111,11 +108,18 @@ public abstract class MixinClientPlayerEntity {
             // if server has mod, ask to track inhabitedTime **ONCE**, then wait until called back.
             if (TravellersToastsClient.doesServerHaveModLoaded) {
                 if (!awaitingServerResponse) {
-                    ClientPlayNetworking.send(new Identifier(MOD_ID, "track_inhabited_time"), PacketByteBufs.empty());
-                    ClientPlayNetworking.unregisterGlobalReceiver(new Identifier(MOD_ID, "track_inhabited_time"));
-                    ClientPlayNetworking.registerGlobalReceiver(new Identifier(MOD_ID, "track_inhabited_time"),
+                    ClientPlayNetworking.send(MONITOR_INHABITED_TIME, PacketByteBufs.empty());
+                    ClientPlayNetworking.unregisterReceiver(MONITOR_INHABITED_TIME);
+                    ClientPlayNetworking.registerReceiver(MONITOR_INHABITED_TIME,
                         (client, handler, buf, responseSender) -> {
-                            TravellersToasts.LOGGER.info("wow!");
+                            TravellersToasts.LOGGER.info("Received valid inhabited time from server");
+                            TravellersToasts.LOGGER.info("ticksEnteringBiome == HOLD_TICKS: " + (ticksEnteringBiome == HOLD_TICKS));
+                            TravellersToasts.LOGGER.info("ticksEnteringBiome: " + ticksEnteringBiome);
+                            if (ticksEnteringBiome == HOLD_TICKS) {
+                                BiomeToast.show(MinecraftClient.getInstance().getToastManager(), currentBiome);
+                                previousBiome = currentBiome;
+                                ticksEnteringBiome = 0;
+                            }
                             awaitingServerResponse = false;
                         });
                     awaitingServerResponse = true;
@@ -138,28 +142,16 @@ public abstract class MixinClientPlayerEntity {
          *
          *   * All previous conditions are met for at least HOLD_TICKS ticks.
          */
-        // Don't decrement or increment counter if the player is not moving--staggered movement may still result in
-        // toasts being shown!
+        // Don't decrement or increment counter if the player is not moving--this allows for staggered movement
+        // (e.g. jumping) to still result in toasts being shown!
         if (!(instance.input.hasForwardMovement() || velocity.getY() <= -1d)) return;
-
-        var x = ChunkSectionPos.getSectionCoord(blockPos.getX());
-        var z = ChunkSectionPos.getSectionCoord(blockPos.getZ());
-        var currentChunk = instance.getWorld().getChunkManager().getWorldChunk(x, z, false);
-
-        // TravellersToasts.LOGGER.info(chunk == null ? "null" : String.valueOf(chunk.getInhabitedTime()));
-
-        TravellersToasts.LOGGER.info(String.valueOf(TravellersToasts.inhabitedTime) + ", " + TravellersToasts.blockPos.toString());
-
-        ClientPlayNetworking.send(SYNC_ID, PacketByteBufs.empty());
-        if (TravellersToasts.inhabitedTime < 0 || TravellersToasts.inhabitedTime >= MAX_INHABITED_TIME)
-            return;
 
         if (currentBiome != previousBiome
             && currentBiome == futureBiome
             && areBiomeFeaturesVisible(currentBiome, clientWorld, blockPos))
         {
-            ++ticksEnteringBiome;
-        } else if (ticksEnteringBiome >= 0)
-            --ticksEnteringBiome;
+            ticksEnteringBiome = Math.min(++ticksEnteringBiome, HOLD_TICKS);
+        } else
+            ticksEnteringBiome = Math.max(--ticksEnteringBiome, 0);
     }
 }
