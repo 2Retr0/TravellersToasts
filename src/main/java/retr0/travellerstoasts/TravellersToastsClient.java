@@ -1,24 +1,18 @@
 package retr0.travellerstoasts;
 
 import net.fabricmc.api.ClientModInitializer;
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.minecraft.util.Identifier;
+import retr0.travellerstoasts.config.Config;
+import retr0.travellerstoasts.network.packet.InhabitedTimeTrackingHandler;
+import retr0.travellerstoasts.network.packet.ModUsageHandler;
 
-import static retr0.travellerstoasts.TravellersToasts.*;
+import static retr0.travellerstoasts.TravellersToasts.MOD_ID;
 
 public class TravellersToastsClient implements ClientModInitializer {
-    public static boolean doesServerHaveModLoaded = false;
-
     @Override
     public void onInitializeClient() {
-        ClientPlayNetworking.registerGlobalReceiver(MOD_LOADED,
-            (client, handler, buf, responseSender) -> {
-                doesServerHaveModLoaded = true;
-                LOGGER.info("Server has mod!");
-            });
+        Config.init(MOD_ID, Config.class);
 
-        ClientPlayConnectionEvents.DISCONNECT.register(
-            (handler, client) -> doesServerHaveModLoaded = false);
+        ModUsageHandler.initialize();
+        InhabitedTimeTrackingHandler.initialize();
     }
 }
