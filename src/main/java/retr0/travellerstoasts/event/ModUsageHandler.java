@@ -10,7 +10,7 @@ import retr0.travellerstoasts.TravellersToasts;
 import retr0.travellerstoasts.TravellersToastsClient;
 import retr0.travellerstoasts.extension.ServerPlayerEntityExtension;
 
-import static retr0.travellerstoasts.network.PacketRegistry.NOTIFY_MOD_USAGE_ID;
+import static retr0.travellerstoasts.network.ModUsageS2CPacket.NOTIFY_MOD_USAGE_ID;
 
 public class ModUsageHandler {
     public static boolean serverUsesMod = false;

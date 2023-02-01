@@ -1,7 +1,6 @@
 package retr0.travellerstoasts.mixin;
 
 import com.mojang.authlib.GameProfile;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.world.ClientWorld;
@@ -12,9 +11,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import retr0.travellerstoasts.BiomeToast;
-import retr0.travellerstoasts.TravellersToasts;
 import retr0.travellerstoasts.TravellersToastsClient;
-import retr0.travellerstoasts.util.BiomeToastManager;
 
 @Mixin(ClientPlayerEntity.class)
 public abstract class MixinClientPlayerEntity extends AbstractClientPlayerEntity {

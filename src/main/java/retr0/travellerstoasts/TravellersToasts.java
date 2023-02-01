@@ -3,8 +3,8 @@ package retr0.travellerstoasts;
 import net.fabricmc.api.ModInitializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import retr0.travellerstoasts.network.packet.InhabitedTimeTrackingHandler;
-import retr0.travellerstoasts.network.packet.ModUsageHandler;
+import retr0.travellerstoasts.event.ModUsageHandler;
+import retr0.travellerstoasts.network.PacketRegistry;
 
 public class TravellersToasts implements ModInitializer {
     public static final String MOD_ID = "travellerstoasts";
@@ -19,7 +19,7 @@ public class TravellersToasts implements ModInitializer {
         // TODO: IMPLMEMNENT CUSTOM BIOMES
         // TODO: IMPLEMENT SERVER TRACK CANCELLING
 
-        ModUsageHandler.initialize();
-        InhabitedTimeTrackingHandler.initialize();
+        PacketRegistry.registerC2SPackets();
+        ModUsageHandler.register();
     }
 }

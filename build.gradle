@@ -1,5 +1,3 @@
-import net.fabricmc.loom.task.RunGameTask
-
 plugins {
 	id 'fabric-loom' version '1.0-SNAPSHOT'
 	id 'maven-publish'
@@ -45,12 +43,6 @@ processResources {
 tasks.withType(JavaCompile).configureEach {
 	// Minecraft 1.18 (1.18-pre2) upwards uses Java 17.
 	it.options.release = 17
-
-	it.options.compilerArgs += "--enable-preview"
-}
-
-tasks.withType(RunGameTask).configureEach {
-	jvmArgs += "--enable-preview"
 }
 
 java {

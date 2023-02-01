@@ -1,15 +1,12 @@
 package retr0.travellerstoasts.mixin;
 
 import com.mojang.authlib.GameProfile;
-import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.network.encryption.PlayerPublicKey;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkSectionPos;
 import net.minecraft.world.World;
-import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -17,10 +14,9 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import retr0.travellerstoasts.TravellersToasts;
 import retr0.travellerstoasts.extension.ServerPlayerEntityExtension;
-import retr0.travellerstoasts.network.TrackInhabitedTimeC2SPacket;
 import retr0.travellerstoasts.network.TrackInhabitedTimeS2CPacket;
 
-import static retr0.travellerstoasts.network.PacketRegistry.INHABITED_TIME_TRACK_RESPONSE_ID;
+import static retr0.travellerstoasts.network.TrackInhabitedTimeS2CPacket.INHABITED_TIME_TRACK_RESPONSE_ID;
 
 @Mixin(ServerPlayerEntity.class)
 public abstract class MixinServerPlayerEntity extends PlayerEntity implements ServerPlayerEntityExtension {
@@ -54,9 +50,10 @@ public abstract class MixinServerPlayerEntity extends PlayerEntity implements Se
         if (chunk != null && chunk.getInhabitedTime() <= maxInhabitedTime) {
             TravellersToasts.LOGGER.info("Server: Sent valid inhabited time response to client for player " + this.getName().getString() + "!");
             stopTracking(true);
-        } else {
-            TravellersToasts.LOGGER.info("---Invalid inhabited time for player " + this.getName().getString() + ".");
         }
+        // else {
+        //     TravellersToasts.LOGGER.info("---Invalid inhabited time for player " + this.getName().getString() + ".");
+        // }
         previousBlockPos = blockPos;
     }
 

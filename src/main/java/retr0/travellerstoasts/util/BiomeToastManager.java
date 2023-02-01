@@ -1,11 +1,8 @@
 package retr0.travellerstoasts.util;
 
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.hud.InGameHud;
 import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.client.toast.ToastManager;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
@@ -16,13 +13,12 @@ import retr0.travellerstoasts.config.Config;
 import retr0.travellerstoasts.event.ModUsageHandler;
 import retr0.travellerstoasts.mixin.AccessorBossBarHud;
 import retr0.travellerstoasts.network.TrackInhabitedTimeC2SPacket;
-import retr0.travellerstoasts.network.TrackInhabitedTimeS2CPacket;
 
 import static net.fabricmc.fabric.api.tag.convention.v1.ConventionalBiomeTags.OCEAN;
 import static net.fabricmc.fabric.api.tag.convention.v1.ConventionalBiomeTags.RIVER;
 import static net.minecraft.SharedConstants.TICKS_PER_MINUTE;
 import static net.minecraft.SharedConstants.TICKS_PER_SECOND;
-import static retr0.travellerstoasts.network.PacketRegistry.INHABITED_TIME_TRACK_REQUEST_ID;
+import static retr0.travellerstoasts.network.TrackInhabitedTimeC2SPacket.INHABITED_TIME_TRACK_REQUEST_ID;
 
 public class BiomeToastManager {
     private final static int HOLD_TICKS = TICKS_PER_SECOND * 3; // Required ticks for the "entering biome" condition.
@@ -71,7 +67,7 @@ public class BiomeToastManager {
 
         // Do nothing if the current biome is still on cooldown.
         if (currentBiome.equals(previousBiome) || !biomeCooldownHandler.check(currentBiome)) {
-            TravellersToasts.LOGGER.info("---Exited update(): " + currentBiome.getKey().get().getValue() + " is on cooldown!");
+            // TravellersToasts.LOGGER.info("---Exited update(): " + currentBiome.getKey().get().getValue() + " is on cooldown!");
             return;
         }
 

@@ -4,7 +4,7 @@
     "package": "retr0.travellerstoasts.mixin",
     "compatibilityLevel": "JAVA_17",
     "client": [
-        "MixinBossBarHud",
+        "AccessorBossBarHud",
         "MixinClientPlayerEntity"
     ],
     "mixins": [
