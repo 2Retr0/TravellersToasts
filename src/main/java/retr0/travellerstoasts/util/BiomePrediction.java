@@ -1,5 +1,6 @@
 package retr0.travellerstoasts.util;
 
+import net.minecraft.block.AirBlock;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.util.math.BlockPos;
@@ -45,10 +46,15 @@ public final class BiomePrediction {
         // they would not be able to see.
         var moodPercentage = player.getMoodPercentage();
 
-        if (worldRegistryKey == World.NETHER)
+        if (worldRegistryKey == World.NETHER) {
             // For the nether, the mood percentage tends to fluctuate more often and at higher values (e.g. >0.0008f).
-            return moodPercentage < 0.001f;
-        else if (worldRegistryKey == World.END)
+            if (moodPercentage < 0.001f) return true;
+
+            for (var i = 1; i <= 3; ++i) {
+                if (!player.world.getBlockState(player.getBlockPos().up(i)).isAir()) return false;
+            }
+            return true;
+        } else if (worldRegistryKey == World.END)
             // For The End, we consider biomes' features to always be visible.
             return true;
 
