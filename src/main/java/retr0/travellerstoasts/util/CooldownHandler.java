@@ -5,13 +5,15 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 public record CooldownHandler<K>(Supplier<Long> cooldownSupplier, Map<K, Long> cooldownCache) {
-    public CooldownHandler(Supplier<Long> cooldownSupplier) { this(cooldownSupplier, new HashMap<>()); }
+    public CooldownHandler(Supplier<Long> cooldownMsSupplier) {
+        this(cooldownMsSupplier, new HashMap<>());
+    }
 
-    public boolean check(K key) {
+    public boolean hasCooled(K key) {
         return System.currentTimeMillis() - cooldownCache.getOrDefault(key, -1L) > cooldownSupplier.get();
     }
 
-    public void update(K key) {
+    public void refresh(K key) {
         cooldownCache.put(key, System.currentTimeMillis());
     }
 

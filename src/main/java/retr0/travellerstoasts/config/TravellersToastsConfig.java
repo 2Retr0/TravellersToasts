@@ -2,7 +2,7 @@ package retr0.travellerstoasts.config;
 
 import retr0.carrotconfig.config.CarrotConfig;
 
-public class Config extends CarrotConfig {
+public class TravellersToastsConfig extends CarrotConfig {
     @Entry
     public static boolean roundedIconBackground = false;
 

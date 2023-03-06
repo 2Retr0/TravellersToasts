@@ -16,16 +16,10 @@
     "icon": "assets/travellerstoasts/icon.png",
     "environment": "*",
     "entrypoints": {
-        "main": [
-            "retr0.travellerstoasts.TravellersToasts"
-        ],
-        "client": [
-            "retr0.travellerstoasts.TravellersToastsClient"
-        ]
+        "main":   [ "retr0.travellerstoasts.TravellersToasts" ],
+        "client": [ "retr0.travellerstoasts.TravellersToastsClient" ]
     },
-    "mixins": [
-        "travellerstoasts.mixins.json"
-    ],
+    "mixins": [ "travellerstoasts.mixins.json" ],
     "depends": {
         "fabricloader": ">=0.14.9",
         "fabric-api": "*"
