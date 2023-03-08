@@ -1,7 +1,7 @@
 # TravellersToasts 
 Vanilla Minecraft features a plethora of biomes, yet many go overlooked due to upfront visual similarities with other mods. TravellersToasts is a small mod which aims to better  express the personalities of each biome by displaying a *toast*[^1]  when you begin '***exploring***' a new biome—take a look!
 
-![Biome Toast Demo](https://files.catbox.moe/n4tz8u.gif "Biome Toast Demo")
+![Biome Toast Demo](https://github.com/2Retr0/TravellersToasts/blob/1.19/.assets/demo.gif "Biome Toast Demo")
 <sup>**·** If you were curious, the shaders used this for demo are [Complementary Shaders](https://www.complementary.dev).
 
 A longstanding issue I've had with vanilla Minecraft is how unrewarding it can feel to visit new biomes. I hope this small addition could help incentivize/reward aimless traveling—even if just a bit more.
