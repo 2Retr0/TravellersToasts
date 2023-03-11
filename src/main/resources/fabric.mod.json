@@ -3,7 +3,7 @@
     "id": "travellerstoasts",
     "version": "${version}",
     "name": "TravellersToasts",
-    "description": "Adds a mechanic which will display a toast when entering a new biome!",
+    "description": "Display an informational toast when exploring a new biome!",
     "authors": [
         "2Retr0"
     ],
