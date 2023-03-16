@@ -16,6 +16,7 @@ import static retr0.travellerstoasts.TravellersToasts.MOD_ID;
 
 public class BiomeToast implements Toast {
     private static final Identifier ICON_PLAQUE_TEXTURE = new Identifier(MOD_ID, "textures/gui/icon_plaque.png");
+    private static final Identifier ICON_FALLBACK_TEXTURE = getBiomeIconIdentifier(new Identifier("meadow"));
     private static final long DURATION = 5000L;
 
     private long startTime;
@@ -25,7 +26,7 @@ public class BiomeToast implements Toast {
     public BiomeToast(Identifier biomeId) { this.biomeId = biomeId; }
 
 
-    private Identifier getBiomeIcon(Identifier biomeId) {
+    private static Identifier getBiomeIconIdentifier(Identifier biomeId) {
         var biomeAssetPath = "textures/gui/icons/" + biomeId.getNamespace() + "/" + biomeId.getPath() + ".png";
 
         return new Identifier(MOD_ID, biomeAssetPath);
@@ -46,7 +47,7 @@ public class BiomeToast implements Toast {
         // Draw toast background
         RenderSystem.setShaderTexture(0, TEXTURE);
         RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
-        manager.drawTexture(matrices, 0, 0, 0, 32, this.getWidth(), this.getHeight());
+        DrawableHelper.drawTexture(matrices, 0, 0, 0, 32, this.getWidth(), this.getHeight());
 
         // Draw toast description
         manager.getClient().textRenderer.draw(matrices, toastHeader, 30.0f, 7.0f, 0xFF500050);
@@ -54,11 +55,13 @@ public class BiomeToast implements Toast {
 
         // Draw biome icon plaque
         RenderSystem.setShaderTexture(0, ICON_PLAQUE_TEXTURE);
-        manager.drawTexture(matrices, 4, 4, TravellersToastsConfig.roundedIconBackground ? 24 : 0, 0, 24, 24);
+        DrawableHelper.drawTexture(matrices, 4, 4, TravellersToastsConfig.roundedIconBackground ? 24 : 0, 0, 24, 24);
 
-        // Draw biome icon
-        RenderSystem.setShaderTexture(0, getBiomeIcon(biomeId));
-        DrawableHelper.drawTexture(matrices, 8, 8, manager.getZOffset(), 0, 0, 16, 16, 16, 16);
+        // Draw biome icon (default if icon for the biome doesn't exist)
+        var iconIdentifier = getBiomeIconIdentifier(biomeId);
+        var doesIconExist = manager.getClient().getResourceManager().getResource(iconIdentifier).isPresent();
+        RenderSystem.setShaderTexture(0, doesIconExist ? iconIdentifier : ICON_FALLBACK_TEXTURE);
+        DrawableHelper.drawTexture(matrices, 8, 8, 0, 0, 16, 16, 16, 16);
 
         return startTime - this.startTime >= DURATION ? Toast.Visibility.HIDE : Toast.Visibility.SHOW;
     }
