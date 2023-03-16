@@ -24,9 +24,12 @@ public final class BiomePredictionUtil {
 
         // We only check the x and z-directions as underground biomes generally aren't that tall with respect to the
         // speeds a player falls at.
-        var futureAbsolutePos = player.getVelocity().multiply(FUTURE_TICKS).multiply(1d, 0d, 1d);
+        var absoluteFuturePos = player.getVelocity().multiply(FUTURE_TICKS).multiply(1d, 0d, 1d);
+        var relativeFuturePos = player.getPos().add(absoluteFuturePos);
+        var relativeFutureBlockPos = new BlockPos(
+                (int) relativeFuturePos.x, (int) relativeFuturePos.y, (int) relativeFuturePos.z);
         // Relative block position in PEEK_SECONDS seconds based on current velocity.
-        var futureBlockPos = new BlockPos(player.getPos().add(futureAbsolutePos));
+        var futureBlockPos = new BlockPos(relativeFutureBlockPos);
 
         return player.clientWorld.getBiome(futureBlockPos);
     }
