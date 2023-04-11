@@ -1,0 +1,12 @@
+{
+    "travellerstoasts.toast.header": "Esplorando bioma",
+    "travellerstoasts.carrotconfig.title": "Configurazione di TravellersToasts!",
+
+    "travellerstoasts.carrotconfig.roundedIconBackground.name": "Usa sfondo dell'icona arrotondato",
+
+    "travellerstoasts.carrotconfig.maxInhabitedTime.name": "Tempo massimo abitato nel chunk",
+    "travellerstoasts.carrotconfig.maxInhabitedTime.tooltip": "Indica il tempo massimo (in minuti) che un chunk può avere un giocatore nelle sue vicinanze prima che venga impedita la visualizzazione del toast del bioma all'interno dei suoi confini.\n\n(§oValori più alti possono essere preferibili per i mondi con molti giocatori!§r§r)",
+
+    "travellerstoasts.carrotconfig.toastCooldownTime.name": "Tempo di ricarica della notifica pop-up",
+    "travellerstoasts.carrotconfig.toastCooldownTime.tooltip": "Indica l'ora (in minuti) in cui non verrà visualizzata nuovamente la notifica pop-up di un bioma (§oper bioma§r)."
+}
