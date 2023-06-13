@@ -1,11 +1,8 @@
 package retr0.travellerstoasts;
 
-import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.client.gui.DrawableHelper;
-import net.minecraft.client.render.GameRenderer;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.toast.Toast;
 import net.minecraft.client.toast.ToastManager;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -34,7 +31,7 @@ public class BiomeToast implements Toast {
 
 
     @Override
-    public Toast.Visibility draw(MatrixStack matrices, ToastManager manager, long startTime) {
+    public Visibility draw(DrawContext context, ToastManager manager, long startTime) {
         var toastHeader = Text.translatable(MOD_ID + ".toast.header");
         var biomeName = Text.translatable(biomeId.toTranslationKey("biome"));
 
@@ -43,25 +40,21 @@ public class BiomeToast implements Toast {
             this.justUpdated = false;
         }
 
-        RenderSystem.setShader(GameRenderer::getPositionTexProgram);
-        // Draw toast background
-        RenderSystem.setShaderTexture(0, TEXTURE);
-        RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
-        DrawableHelper.drawTexture(matrices, 0, 0, 0, 32, this.getWidth(), this.getHeight());
+        // --- Draw Toast Background ---
+        context.drawTexture(TEXTURE, 0, 0, 0, 32, this.getWidth(), this.getHeight());
 
-        // Draw toast description
-        manager.getClient().textRenderer.draw(matrices, toastHeader, 30.0f, 7.0f, 0xFF500050);
-        manager.getClient().textRenderer.draw(matrices, biomeName, 30.0f, 18.0f, 0xFF000000);
+        // --- Draw Toast Description ---
+        context.drawText(manager.getClient().textRenderer, toastHeader, 30, 7, 0xFF500050, false);
+        context.drawText(manager.getClient().textRenderer, biomeName, 30, 18, 0xFF000000, false);
 
-        // Draw biome icon plaque
-        RenderSystem.setShaderTexture(0, ICON_PLAQUE_TEXTURE);
-        DrawableHelper.drawTexture(matrices, 4, 4, TravellersToastsConfig.roundedIconBackground ? 24 : 0, 0, 24, 24);
+        // --- Draw Biome Icon Plaque ---
+        context.drawTexture(ICON_PLAQUE_TEXTURE, 4, 4, TravellersToastsConfig.roundedIconBackground ? 24 : 0, 0, 24, 24);
 
-        // Draw biome icon (default if icon for the biome doesn't exist)
+        // --- Draw Biome Icon ---
         var iconIdentifier = getBiomeIconIdentifier(biomeId);
         var doesIconExist = manager.getClient().getResourceManager().getResource(iconIdentifier).isPresent();
-        RenderSystem.setShaderTexture(0, doesIconExist ? iconIdentifier : ICON_FALLBACK_TEXTURE);
-        DrawableHelper.drawTexture(matrices, 8, 8, 0, 0, 16, 16, 16, 16);
+        context.drawTexture(
+            doesIconExist ? iconIdentifier : ICON_FALLBACK_TEXTURE, 8, 8, 0, 0, 16, 16, 16, 16);
 
         return startTime - this.startTime >= DURATION ? Toast.Visibility.HIDE : Toast.Visibility.SHOW;
     }

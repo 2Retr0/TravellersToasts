@@ -7,6 +7,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.util.Identifier;
+import retr0.carrotconfig.config.CarrotConfig;
 import retr0.travellerstoasts.config.TravellersToastsConfig;
 import retr0.travellerstoasts.event.EventHandler;
 import retr0.travellerstoasts.network.PacketRegistry;
@@ -16,7 +17,7 @@ import static retr0.travellerstoasts.TravellersToasts.MOD_ID;
 public class TravellersToastsClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
-        TravellersToastsConfig.init(MOD_ID, TravellersToastsConfig.class);
+        CarrotConfig.init(MOD_ID, TravellersToastsConfig.class);
 
         PacketRegistry.registerS2CPackets();
         EventHandler.register();

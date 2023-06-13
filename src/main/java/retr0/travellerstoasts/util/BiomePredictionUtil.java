@@ -57,7 +57,7 @@ public final class BiomePredictionUtil {
             if (moodPercentage < 0.001f) return true;
 
             for (var i = 1; i <= 3; ++i) {
-                if (!player.world.getBlockState(player.getBlockPos().up(i)).isAir()) return false;
+                if (!player.getWorld().getBlockState(player.getBlockPos().up(i)).isAir()) return false;
             }
             return true;
         } else if (worldRegistryKey == World.END) {

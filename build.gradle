@@ -1,14 +1,14 @@
 plugins {
-	id 'fabric-loom' version '1.1-SNAPSHOT'
+	id 'fabric-loom' version '1.2-SNAPSHOT'
 	id 'maven-publish'
 }
 
-sourceCompatibility = JavaVersion.VERSION_17
-targetCompatibility = JavaVersion.VERSION_17
+version = "${project.mod_version}+${project.minecraft_version}"
+group = project.maven_group
 
-archivesBaseName    = project.archives_base_name
-version             = "${project.mod_version}+${project.minecraft_version}"
-group               = project.maven_group
+base {
+	archivesName = project.archives_base_name
+}
 
 repositories {
 	maven { url 'https://api.modrinth.com/maven' }
@@ -24,16 +24,21 @@ dependencies {
 	mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
-	// Fabric API. This is technically optional, but you probably want it anyway.
-	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+	// --- Fabric API ---
+	// modImplementation(fabricApi.module("fabric-api-base", project.fabric_version))
+	modImplementation(fabricApi.module("fabric-networking-api-v1", project.fabric_version))
+	modImplementation(fabricApi.module("fabric-entity-events-v1", project.fabric_version))
+	modImplementation(fabricApi.module("fabric-resource-loader-v0", project.fabric_version))
+	modImplementation(fabricApi.module("fabric-convention-tags-v1", project.fabric_version))
 
-	// CarrotConfig.
-	modCompileOnly "com.github.2Retr0:carrotconfig:1.19-SNAPSHOT"
-	modImplementation "com.github.2Retr0:carrotconfig:1.19-SNAPSHOT"
-	include "com.github.2Retr0:carrotconfig:1.19-SNAPSHOT"
+	// --- CarrotConfig ---
+	modImplementation "com.github.2Retr0:carrotconfig:${project.carrotconfig_version}"
+	include "com.github.2Retr0:carrotconfig:${project.carrotconfig_version}"
 
-	modLocalRuntime "maven.modrinth:modmenu:${project.mod_menu_version}"
-	modLocalRuntime "maven.modrinth:tectonic:1.1.9+1.19.4+mod"
+	// --- Dev Environment Dependencies ---
+	modLocalRuntime "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+	modLocalRuntime "maven.modrinth:modmenu:${project.modmenu_version}"
+	// modLocalRuntime "maven.modrinth:tectonic:1.1.9+1.19.4+mod"
 }
 
 processResources {
@@ -54,6 +59,9 @@ java {
 	// if it is present.
 	// If you remove this line, sources will not be generated.
 	withSourcesJar()
+
+	sourceCompatibility = JavaVersion.VERSION_17
+	targetCompatibility = JavaVersion.VERSION_17
 }
 
 jar {

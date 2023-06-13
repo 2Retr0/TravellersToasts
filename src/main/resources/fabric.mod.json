@@ -2,26 +2,30 @@
     "schemaVersion": 1,
     "id": "travellerstoasts",
     "version": "${version}",
+
     "name": "TravellersToasts",
     "description": "Display an informational toast when exploring a new biome!",
-    "authors": [
-        "2Retr0"
-    ],
+    "authors": [ "2Retr0" ],
     "contact": {
         "homepage": "https://www.curseforge.com/minecraft/mc-mods/travellerstoasts",
-        "issues": "https://github.com/2Retr0/TravellersToasts/issues",
-        "sources": "https://github.com/2Retr0/TravellersToasts"
+        "sources": "https://github.com/2Retr0/TravellersToasts",
+        "issues": "https://github.com/2Retr0/TravellersToasts/issues"
     },
     "license": "MIT",
     "icon": "assets/travellerstoasts/icon.png",
+
     "environment": "*",
     "entrypoints": {
         "main":   [ "retr0.travellerstoasts.TravellersToasts" ],
         "client": [ "retr0.travellerstoasts.TravellersToastsClient" ]
     },
     "mixins": [ "travellerstoasts.mixins.json" ],
+
     "depends": {
-        "fabricloader": ">=0.14.9",
-        "fabric-api": "*"
+        "fabricloader": "*",
+        "fabric-networking-api-v1": "*",
+        "fabric-entity-events-v1": "*",
+        "fabric-resource-loader-v0": "*",
+        "fabric-convention-tags-v1": "*"
     }
 }

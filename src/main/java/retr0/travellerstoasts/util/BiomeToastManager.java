@@ -115,7 +115,7 @@ public class BiomeToastManager {
      * Updates the time tracked for 'exploring' a biome. Should be called every game tick.
      */
     public void tick(ClientPlayerEntity player) {
-        currentBiome = player.world.getBiome(player.getBlockPos());
+        currentBiome = player.getWorld().getBiome(player.getBlockPos());
         // Do nothing if the current biome is still on cooldown.
         if (currentBiome.equals(previousBiome) || !biomeCooldownHandler.hasCooled(currentBiome)) return;
 

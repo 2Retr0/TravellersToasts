@@ -31,6 +31,10 @@ public class TrackInhabitedTimeC2SPacket {
     {
         var maxInhabitedTimeTicks = buf.readInt();
 
-        server.execute(() -> ((ExtensionServerPlayerEntity) player).beginTracking(maxInhabitedTimeTicks));
+        server.execute(() -> {
+            if (player == null) return;
+
+            ((ExtensionServerPlayerEntity) player).beginTracking(maxInhabitedTimeTicks);
+        });
     }
 }
