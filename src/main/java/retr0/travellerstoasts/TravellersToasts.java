@@ -1,10 +1,12 @@
 package retr0.travellerstoasts;
 
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.entity.event.v1.ServerEntityWorldChangeEvents;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import retr0.travellerstoasts.event.EventHandler;
+import retr0.travellerstoasts.extension.ExtensionServerPlayerEntity;
 import retr0.travellerstoasts.network.PacketRegistry;
+import retr0.travellerstoasts.util.ModUsageManager;
 
 public class TravellersToasts implements ModInitializer {
     public static final String MOD_ID = "travellerstoasts";
@@ -21,6 +23,9 @@ public class TravellersToasts implements ModInitializer {
         LOGGER.info("Initialized TravellersToasts!");
 
         PacketRegistry.registerC2SPackets();
-        EventHandler.register();
+        ModUsageManager.init();
+
+        ServerEntityWorldChangeEvents.AFTER_PLAYER_CHANGE_WORLD.register(((player, origin, destination) ->
+                ((ExtensionServerPlayerEntity) player).travellersToasts$stopTracking(false)));
     }
 }

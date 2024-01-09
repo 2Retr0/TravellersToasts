@@ -20,12 +20,12 @@ public abstract class MixinServerPlayerEntity extends PlayerEntity implements Ex
     @Unique private int maxInhabitedTime = -1;
 
     @Override
-    public void beginTracking(int maxInhabitedTimeTicks) { maxInhabitedTime = maxInhabitedTimeTicks; }
+    public void travellersToasts$beginTracking(int maxInhabitedTimeTicks) { maxInhabitedTime = maxInhabitedTimeTicks; }
 
 
 
     @Override
-    public void stopTracking(boolean finishedQuery) {
+    public void travellersToasts$stopTracking(boolean finishedQuery) {
         maxInhabitedTime = -1; // Stop tracking.
         TrackInhabitedTimeS2CPacket.send(finishedQuery, (ServerPlayerEntity) (Object) this);
     }
@@ -47,7 +47,7 @@ public abstract class MixinServerPlayerEntity extends PlayerEntity implements Ex
 
         // If player is on a chunk with an inhabited time less than the specified maximum, send a response back to the
         // client and stop tracking.
-        if (chunk != null && chunk.getInhabitedTime() <= maxInhabitedTime) stopTracking(true);
+        if (chunk != null && chunk.getInhabitedTime() <= maxInhabitedTime) travellersToasts$stopTracking(true);
         previousBlockPos = blockPos;
     }
 

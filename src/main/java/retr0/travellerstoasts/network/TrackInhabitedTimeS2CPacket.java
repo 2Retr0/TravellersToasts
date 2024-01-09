@@ -30,6 +30,6 @@ public class TrackInhabitedTimeS2CPacket {
     {
         boolean finishedQuery = buf.readBoolean();
 
-        client.execute(() -> BiomeToastManager.INSTANCE.processServerResponse(finishedQuery));
+        client.execute(() -> BiomeToastManager.getInstance().processServerResponse(finishedQuery));
     }
 }

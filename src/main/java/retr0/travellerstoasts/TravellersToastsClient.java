@@ -9,18 +9,17 @@ import net.minecraft.resource.ResourceType;
 import net.minecraft.util.Identifier;
 import retr0.carrotconfig.config.CarrotConfig;
 import retr0.travellerstoasts.config.TravellersToastsConfig;
-import retr0.travellerstoasts.event.EventHandler;
 import retr0.travellerstoasts.network.PacketRegistry;
+import retr0.travellerstoasts.util.BiomeToastManager;
 
 import static retr0.travellerstoasts.TravellersToasts.MOD_ID;
 
 public class TravellersToastsClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
-        CarrotConfig.init(MOD_ID, TravellersToastsConfig.class);
-
         PacketRegistry.registerS2CPackets();
-        EventHandler.register();
+        CarrotConfig.init(MOD_ID, TravellersToastsConfig.class);
+        BiomeToastManager.init();
 
         // Discover available icons
         ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(

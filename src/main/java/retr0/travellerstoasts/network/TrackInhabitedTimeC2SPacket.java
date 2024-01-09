@@ -34,7 +34,7 @@ public class TrackInhabitedTimeC2SPacket {
         server.execute(() -> {
             if (player == null) return;
 
-            ((ExtensionServerPlayerEntity) player).beginTracking(maxInhabitedTimeTicks);
+            ((ExtensionServerPlayerEntity) player).travellersToasts$beginTracking(maxInhabitedTimeTicks);
         });
     }
 }

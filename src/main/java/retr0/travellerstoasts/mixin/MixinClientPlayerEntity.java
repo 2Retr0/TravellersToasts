@@ -19,7 +19,7 @@ public abstract class MixinClientPlayerEntity extends AbstractClientPlayerEntity
      */
     @Inject(method = "tick", at = @At("TAIL"))
     private void onTick(CallbackInfo ci) {
-        BiomeToastManager.INSTANCE.tick((ClientPlayerEntity) (Object) this);
+        BiomeToastManager.getInstance().tick((ClientPlayerEntity) (Object) this);
     }
 
     private MixinClientPlayerEntity(ClientWorld world, GameProfile profile, @Nullable PlayerPublicKey publicKey) {

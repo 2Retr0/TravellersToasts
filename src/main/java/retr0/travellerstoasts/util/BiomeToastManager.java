@@ -10,9 +10,9 @@ import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.biome.Biome;
+import retr0.carrotconfig.config.ConfigSavedCallback;
 import retr0.travellerstoasts.BiomeToast;
 import retr0.travellerstoasts.config.TravellersToastsConfig;
-import retr0.travellerstoasts.event.EventHandler;
 import retr0.travellerstoasts.mixin.AccessorBossBarHud;
 import retr0.travellerstoasts.network.TrackInhabitedTimeC2SPacket;
 
@@ -21,13 +21,12 @@ import static net.fabricmc.fabric.api.tag.convention.v1.ConventionalBiomeTags.RI
 
 @Environment(EnvType.CLIENT)
 public class BiomeToastManager {
-    public static final BiomeToastManager INSTANCE = new BiomeToastManager(MinecraftClient.getInstance());
+    private static BiomeToastManager instance;
     // Required ticks for the "entering biome" condition.
     private final static int HOLD_TICKS = SharedConstants.TICKS_PER_SECOND * 3;
 
     private final CooldownHandler<RegistryEntry<Biome>> biomeCooldownHandler =
-            new CooldownHandler<>(() -> (long) (TravellersToastsConfig.toastCooldownTime * 60000));
-    private final MinecraftClient client;
+            new CooldownHandler<>(() -> (long) TravellersToastsConfig.toastCooldownTime * 60000L);
 
     private boolean awaitingServerResponse = false;
     private int ticksExploringBiome = 0;
@@ -35,9 +34,26 @@ public class BiomeToastManager {
     private RegistryEntry<Biome> previousBiome;
     private RegistryEntry<Biome> currentBiome;
 
+    public static void init() {
+        if (instance != null) return;
+
+        instance = new BiomeToastManager();
+
+        ConfigSavedCallback.EVENT.register(configClass -> {
+            if (!configClass.isAssignableFrom(TravellersToastsConfig.class)) return;
+
+            instance.resetState(false);
+            TrackInhabitedTimeC2SPacket.send(-1); // Stop server from tracking player.
+        });
+    }
+
+    public static BiomeToastManager getInstance() {
+        return instance;
+    }
+
     /**
      * Attempts to show a biome toast if the player has been 'exploring' a biome for a valid amount of time.
-     * @param sendServerRequest If {@code true}, additionally requests the server to check for a valid inhabited time
+     * @param requestServerCheck If {@code true}, additionally requests the server to check for a valid inhabited time
      *                          before showing the toast.
      */
     private void tryShowingToast(boolean requestServerCheck) {
@@ -53,7 +69,7 @@ public class BiomeToastManager {
             return;
         }
 
-        BiomeToast.show(client.getToastManager(), currentBiome);
+        BiomeToast.show(MinecraftClient.getInstance().getToastManager(), currentBiome);
         biomeCooldownHandler.refresh(previousBiome);
         previousBiome = currentBiome;
         resetState(false);
@@ -88,7 +104,7 @@ public class BiomeToastManager {
 
         // Don't decrement or increment ticksEnteringBiome if the player is not moving.
         var movementChecks = player.input.hasForwardMovement() && currentPos.squaredDistanceTo(previousPos) > 0.004;
-        var bossBarChecks = ((AccessorBossBarHud) client.inGameHud.getBossBarHud()).getBossBars().isEmpty();
+        var bossBarChecks = ((AccessorBossBarHud) MinecraftClient.getInstance().inGameHud.getBossBarHud()).getBossBars().isEmpty();
         // Permit only swimming in ocean biomes to count as 'exploration'; otherwise, allow both swimming and walking.
         var oceanBiomeChecks = (isOceanBiome && player.isSubmergedInWater() && player.isInSwimmingPose())
                 || (!isOceanBiome && (!player.isSubmergedInWater() || player.isInSwimmingPose()));
@@ -119,7 +135,7 @@ public class BiomeToastManager {
         // Do nothing if the current biome is still on cooldown.
         if (currentBiome.equals(previousBiome) || !biomeCooldownHandler.hasCooled(currentBiome)) return;
 
-        tryShowingToast(EventHandler.getServerModUsage() && TravellersToastsConfig.maxInhabitedTime > 0f);
+        tryShowingToast(ModUsageManager.getInstance().doesServerUseMod() && TravellersToastsConfig.maxInhabitedTime > 0f);
 
         ticksExploringBiome += doesPlayerHaveValidState(player) && isPlayerInValidLocation(player) ? 1 : -1;
         ticksExploringBiome = MathHelper.clamp(ticksExploringBiome, 0, HOLD_TICKS);
@@ -135,7 +151,5 @@ public class BiomeToastManager {
             resetState(false);
     }
 
-    private BiomeToastManager(MinecraftClient client) {
-        this.client = client;
-    }
+    private BiomeToastManager() { }
 }
