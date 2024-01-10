@@ -20,24 +20,5 @@ public class TravellersToastsClient implements ClientModInitializer {
         PacketRegistry.registerS2CPackets();
         CarrotConfig.init(MOD_ID, TravellersToastsConfig.class);
         BiomeToastManager.init();
-
-        // Discover available icons
-        ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(
-            new SimpleSynchronousResourceReloadListener() {
-                @Override
-                public void reload(ResourceManager manager) {
-                    var iconMappings = manager.findResources("textures/gui/icons", identifier ->
-                        identifier.getNamespace().equals(MOD_ID) && identifier.getPath().endsWith(".png"));
-
-                    // Register each biome icon available into the texture manager.
-                    iconMappings.forEach((identifier, resource) ->
-                        MinecraftClient.getInstance().getTextureManager().bindTexture(identifier));
-                }
-
-                @Override
-                public Identifier getFabricId() {
-                    return new Identifier(MOD_ID, "resource_listener");
-                }
-            });
     }
 }

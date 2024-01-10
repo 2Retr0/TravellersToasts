@@ -1,0 +1,6 @@
+wheel
+pillow
+beautifulsoup4
+urllib3
+numpy
+pyoxipng

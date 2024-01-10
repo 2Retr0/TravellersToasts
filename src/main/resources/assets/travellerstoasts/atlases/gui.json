@@ -1,0 +1,268 @@
+{
+    "sources": [
+        {
+            "type": "single",
+            "resource": "travellerstoasts:toast/plaque"
+        },
+        {
+            "type": "single",
+            "resource": "travellerstoasts:toast/plaque_rounded"
+        },
+        {
+            "type": "single",
+            "resource": "travellerstoasts:biome/minecraft/the_void"
+        },
+        {
+            "type": "single",
+            "resource": "travellerstoasts:biome/minecraft/plains"
+        },
+        {
+            "type": "single",
+            "resource": "travellerstoasts:biome/minecraft/sunflower_plains"
+        },
+        {
+            "type": "single",
+            "resource": "travellerstoasts:biome/minecraft/snowy_plains"
+        },
+        {
+            "type": "single",
+            "resource": "travellerstoasts:biome/minecraft/ice_spikes"
+        },
+        {
+            "type": "single",
+            "resource": "travellerstoasts:biome/minecraft/desert"
+        },
+        {
+            "type": "single",
+            "resource": "travellerstoasts:biome/minecraft/swamp"
+        },
+        {
+            "type": "single",
+            "resource": "travellerstoasts:biome/minecraft/mangrove_swamp"
+        },
+        {
+            "type": "single",
+            "resource": "travellerstoasts:biome/minecraft/forest"
+        },
+        {
+            "type": "single",
+            "resource": "travellerstoasts:biome/minecraft/flower_forest"
+        },
+        {
+            "type": "single",
+            "resource": "travellerstoasts:biome/minecraft/birch_forest"
+        },
+        {
+            "type": "single",
+            "resource": "travellerstoasts:biome/minecraft/dark_forest"
+        },
+        {
+            "type": "single",
+            "resource": "travellerstoasts:biome/minecraft/old_growth_birch_forest"
+        },
+        {
+            "type": "single",
+            "resource": "travellerstoasts:biome/minecraft/old_growth_pine_taiga"
+        },
+        {
+            "type": "single",
+            "resource": "travellerstoasts:biome/minecraft/old_growth_spruce_taiga"
+        },
+        {
+            "type": "single",
+            "resource": "travellerstoasts:biome/minecraft/taiga"
+        },
+        {
+            "type": "single",
+            "resource": "travellerstoasts:biome/minecraft/snowy_taiga"
+        },
+        {
+            "type": "single",
+            "resource": "travellerstoasts:biome/minecraft/savanna"
+        },
+        {
+            "type": "single",
+            "resource": "travellerstoasts:biome/minecraft/savanna_plateau"
+        },
+        {
+            "type": "single",
+            "resource": "travellerstoasts:biome/minecraft/windswept_hills"
+        },
+        {
+            "type": "single",
+            "resource": "travellerstoasts:biome/minecraft/windswept_gravelly_hills"
+        },
+        {
+            "type": "single",
+            "resource": "travellerstoasts:biome/minecraft/windswept_forest"
+        },
+        {
+            "type": "single",
+            "resource": "travellerstoasts:biome/minecraft/windswept_savanna"
+        },
+        {
+            "type": "single",
+            "resource": "travellerstoasts:biome/minecraft/jungle"
+        },
+        {
+            "type": "single",
+            "resource": "travellerstoasts:biome/minecraft/sparse_jungle"
+        },
+        {
+            "type": "single",
+            "resource": "travellerstoasts:biome/minecraft/bamboo_jungle"
+        },
+        {
+            "type": "single",
+            "resource": "travellerstoasts:biome/minecraft/badlands"
+        },
+        {
+            "type": "single",
+            "resource": "travellerstoasts:biome/minecraft/eroded_badlands"
+        },
+        {
+            "type": "single",
+            "resource": "travellerstoasts:biome/minecraft/wooded_badlands"
+        },
+        {
+            "type": "single",
+            "resource": "travellerstoasts:biome/minecraft/meadow"
+        },
+        {
+            "type": "single",
+            "resource": "travellerstoasts:biome/minecraft/cherry_grove"
+        },
+        {
+            "type": "single",
+            "resource": "travellerstoasts:biome/minecraft/grove"
+        },
+        {
+            "type": "single",
+            "resource": "travellerstoasts:biome/minecraft/snowy_slopes"
+        },
+        {
+            "type": "single",
+            "resource": "travellerstoasts:biome/minecraft/frozen_peaks"
+        },
+        {
+            "type": "single",
+            "resource": "travellerstoasts:biome/minecraft/jagged_peaks"
+        },
+        {
+            "type": "single",
+            "resource": "travellerstoasts:biome/minecraft/stony_peaks"
+        },
+        {
+            "type": "single",
+            "resource": "travellerstoasts:biome/minecraft/river"
+        },
+        {
+            "type": "single",
+            "resource": "travellerstoasts:biome/minecraft/frozen_river"
+        },
+        {
+            "type": "single",
+            "resource": "travellerstoasts:biome/minecraft/beach"
+        },
+        {
+            "type": "single",
+            "resource": "travellerstoasts:biome/minecraft/snowy_beach"
+        },
+        {
+            "type": "single",
+            "resource": "travellerstoasts:biome/minecraft/stony_shore"
+        },
+        {
+            "type": "single",
+            "resource": "travellerstoasts:biome/minecraft/warm_ocean"
+        },
+        {
+            "type": "single",
+            "resource": "travellerstoasts:biome/minecraft/lukewarm_ocean"
+        },
+        {
+            "type": "single",
+            "resource": "travellerstoasts:biome/minecraft/deep_lukewarm_ocean"
+        },
+        {
+            "type": "single",
+            "resource": "travellerstoasts:biome/minecraft/ocean"
+        },
+        {
+            "type": "single",
+            "resource": "travellerstoasts:biome/minecraft/deep_ocean"
+        },
+        {
+            "type": "single",
+            "resource": "travellerstoasts:biome/minecraft/cold_ocean"
+        },
+        {
+            "type": "single",
+            "resource": "travellerstoasts:biome/minecraft/deep_cold_ocean"
+        },
+        {
+            "type": "single",
+            "resource": "travellerstoasts:biome/minecraft/frozen_ocean"
+        },
+        {
+            "type": "single",
+            "resource": "travellerstoasts:biome/minecraft/deep_frozen_ocean"
+        },
+        {
+            "type": "single",
+            "resource": "travellerstoasts:biome/minecraft/mushroom_fields"
+        },
+        {
+            "type": "single",
+            "resource": "travellerstoasts:biome/minecraft/dripstone_caves"
+        },
+        {
+            "type": "single",
+            "resource": "travellerstoasts:biome/minecraft/lush_caves"
+        },
+        {
+            "type": "single",
+            "resource": "travellerstoasts:biome/minecraft/deep_dark"
+        },
+        {
+            "type": "single",
+            "resource": "travellerstoasts:biome/minecraft/nether_wastes"
+        },
+        {
+            "type": "single",
+            "resource": "travellerstoasts:biome/minecraft/warped_forest"
+        },
+        {
+            "type": "single",
+            "resource": "travellerstoasts:biome/minecraft/crimson_forest"
+        },
+        {
+            "type": "single",
+            "resource": "travellerstoasts:biome/minecraft/soul_sand_valley"
+        },
+        {
+            "type": "single",
+            "resource": "travellerstoasts:biome/minecraft/basalt_deltas"
+        },
+        {
+            "type": "single",
+            "resource": "travellerstoasts:biome/minecraft/the_end"
+        },
+        {
+            "type": "single",
+            "resource": "travellerstoasts:biome/minecraft/end_highlands"
+        },
+        {
+            "type": "single",
+            "resource": "travellerstoasts:biome/minecraft/end_midlands"
+        },
+        {
+            "type": "single",
+            "resource": "travellerstoasts:biome/minecraft/small_end_islands"
+        },
+        {
+            "type": "single",
+            "resource": "travellerstoasts:biome/minecraft/end_barrens"
+        }
+    ]
+}
