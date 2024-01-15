@@ -8,5 +8,8 @@
     "travellerstoasts.carrotconfig.maxInhabitedTime.tooltip": "Denotes the maximum time (in minutes) a chunk can have a player in its vicinity before biome toasts are prevented from showing within its borders.\n\n(§oHigher values may be preferable for high-player worlds!§r§r)",
 
     "travellerstoasts.carrotconfig.toastCooldownTime.name": "Toast Cooldown Time",
-    "travellerstoasts.carrotconfig.toastCooldownTime.tooltip": "Denotes the time (in minutes) a biome toast will be prevented from showing again (§oper biome§r)."
+    "travellerstoasts.carrotconfig.toastCooldownTime.tooltip": "Denotes the time (in minutes) a biome toast will be prevented from showing again, §oper biome§r.",
+
+    "travellerstoasts.carrotconfig.usePersistentExploration.name": "Use Persistent Exploration",
+    "travellerstoasts.carrotconfig.usePersistentExploration.tooltip": "Denotes whether a biome toast should show §c§oonly§r §c§oonce§r, §oper biome§r, per world.\n\n(§oCheck is more reliable on servers with the mod installed!§r§r)"
 }

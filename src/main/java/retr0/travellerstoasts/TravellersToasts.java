@@ -2,11 +2,16 @@ package retr0.travellerstoasts;
 
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.entity.event.v1.ServerEntityWorldChangeEvents;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
+import net.minecraft.util.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import retr0.travellerstoasts.extension.ExtensionServerPlayerEntity;
 import retr0.travellerstoasts.network.PacketRegistry;
+import retr0.travellerstoasts.network.UpdateVisitedBiomesS2CPacket;
 import retr0.travellerstoasts.util.ModUsageManager;
+
+import java.util.Collection;
 
 public class TravellersToasts implements ModInitializer {
     public static final String MOD_ID = "travellerstoasts";
@@ -27,5 +32,12 @@ public class TravellersToasts implements ModInitializer {
 
         ServerEntityWorldChangeEvents.AFTER_PLAYER_CHANGE_WORLD.register(((player, origin, destination) ->
                 ((ExtensionServerPlayerEntity) player).travellersToasts$stopTracking(false)));
+
+        ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
+            var advancementEntry = server.getAdvancementLoader().get(new Identifier("adventure/adventuring_time"));
+            var obtainedCriteria = (Collection<String>) handler.player.getAdvancementTracker().getProgress(advancementEntry).getObtainedCriteria();
+
+            UpdateVisitedBiomesS2CPacket.send(obtainedCriteria, handler.player);
+        });
     }
 }

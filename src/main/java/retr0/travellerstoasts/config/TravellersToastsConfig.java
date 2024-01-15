@@ -11,4 +11,7 @@ public class TravellersToastsConfig extends CarrotConfig {
 
     @Entry(min = 0)
     public static float toastCooldownTime = 30.0f;
+
+    @Entry
+    public static boolean usePersistentExploration = false;
 }

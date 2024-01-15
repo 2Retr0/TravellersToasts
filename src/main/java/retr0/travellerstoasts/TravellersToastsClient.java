@@ -1,12 +1,6 @@
 package retr0.travellerstoasts;
 
 import net.fabricmc.api.ClientModInitializer;
-import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
-import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.resource.ResourceManager;
-import net.minecraft.resource.ResourceType;
-import net.minecraft.util.Identifier;
 import retr0.carrotconfig.config.CarrotConfig;
 import retr0.travellerstoasts.config.TravellersToastsConfig;
 import retr0.travellerstoasts.network.PacketRegistry;
